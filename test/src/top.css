@@ -1,0 +1,88 @@
+.term_button{
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 20px 30px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 12px;
+  margin: 10px
+}
+
+.home_button{
+  background-color: lightblue;
+  border: none;
+  color: white;
+  padding: 20px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 12px;
+  margin: 10px;
+  font-size: 10px;}
+
+.divider{
+    width:50px;
+    height:auto;
+    display:inline-block;
+}
+
+.table1{
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.td1, .th1 {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+  color: white;
+  
+}
+
+.tr1:nth-child(even) {
+  background-color: #dddddd;
+}
+
+.top{
+  background-color: #282c34;
+  height: 100%;
+  overflow: scroll;
+}
+
+.column {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 4px;
+  height: 200px;
+}
+
+.row {
+  display: flexbox;
+  flex: 20%;
+  max-height: 20%;
+  max-width: 20%;
+  padding: 0 4px;
+}
+
+.item {
+  margin-top: 8px;
+}
+
+.albums {
+  max-height: 100%;
+}
+
+.flex-container {
+  display: flex;
+  height: 100%;
+}
+.title{
+  width: 100px
+}
+
+
+

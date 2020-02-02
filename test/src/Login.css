@@ -1,0 +1,47 @@
+.login-header {
+  position: fixed;
+  background-color: #282c34;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: black;
+  height: 100%;
+  width:100%;
+  overflow:'auto';
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
+
+.App-link {
+  color: #61dafb;
+}
+
+
+/** Buttons **/
+
+.btn {
+  background-color: transparent;
+  border-radius: 2em;
+  border: 0.2em solid #1ecd97;
+  color: #1ecd97;
+  cursor: pointer;
+  font-size: 3vmin;
+  padding: 0.7em 1.5em;
+  text-transform: uppercase;
+  transition: all 0.25s ease;
+}
+
+.btn:hover {
+  background: #1ecd97;
+  color: #333;
+}
+
+.btn--login {
+  margin: 0 auto;
+}
