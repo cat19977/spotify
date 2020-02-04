@@ -25,9 +25,7 @@ class App extends Component {
       url: `http://127.0.0.1:5000/add_token`,
       type: "GET",
       success: (data) => {
-        console.log(data['token'])
-        if (data['token'] === 'true') {
-          console.log('yes')
+        if (data) {
           this.setState({
             haveToken: true
           })

@@ -37,11 +37,11 @@ def add_token():
         return redirect(SET_TOP_POST_URI)
     else:
         token = Token.query.count()
-        print(token)
-        if token > 0:
-            return jsonify({"token":'true'})
-        else:
+        if token < 0:
             return jsonify({"token":'false'})
+        else:
+            token = Token.query.first()
+            return jsonify(token.serialize())
 
 #gets top songs and stores them in database
 @main.route('/set-top-songs', methods=['GET'])

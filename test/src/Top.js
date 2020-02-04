@@ -74,7 +74,7 @@ class Top extends React.Component {
     const items = this.props.data['data']
     for (var item in items) {
       item = items[item];
-      if (item['term'] === this.props.time || this.props.time == 'saved') {
+      if (item['term'] === this.props.time || this.props.time === 'saved') {
         names.push(item['title']);
         artists.push(item['artist'])
         albums.push(item['album'])
@@ -94,14 +94,10 @@ class Top extends React.Component {
       format_data.push(element);
     }
 
-    const analysis_data = [song_uri, artist_uri];
-
-
-
     const display = this.state.table;
     let element;
     if(this.state.analytics){
-      element = <Analytics data ={analysis_data}/>
+      element = <Analytics artist_data={artist_uri} song_data={song_uri}/>
     }
     else if(display || this.props.time == 'saved'){
       element = <Table data={format_data} /> 
