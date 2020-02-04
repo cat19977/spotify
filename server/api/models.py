@@ -4,6 +4,12 @@ class Token(db.Model):
     __table_args__ = {'extend_existing': True} 
     url = db.Column(db.String(100), primary_key=True)
     header = db.Column(db.String(500))
+    def serialize(self):
+        """Return object data in serializeable format"""
+        return {
+            'url': self.url,
+            'header': self.header,
+        }
 
 class Category(db.Model):
     __tablename__ = 'categories'
@@ -31,6 +37,7 @@ class TopSongs(db.Model):
                 'title': self.title,
                 'artist': self.artist,
                 'album': self.album,
+                'uri': self.uri,
                 'popularity': self.popularity,
                 'term': self.category_id,
                 'artist_href': self.artist_href,
@@ -47,5 +54,21 @@ class SavedSongs(db.Model):
     artist = db.Column(db.String(50))
     album = db.Column(db.String(50))
     popularity = db.Column(db.Integer)
-    category_id = db.Column(db.String(50), db.ForeignKey('categories.id'))
+    artist_href = db.Column(db.String(50))
+    album_href = db.Column(db.String(50))
+    img = db.Column(db.String(50))
+    @property
+    def serialize(self):
+        """Return object data in serializeable format"""
+        return {'id': self.id,
+                'uri': self.uri,
+                'title': self.title,
+                'artist': self.artist,
+                'album': self.album,
+                'popularity': self.popularity,
+                'artist_href': self.artist_href,
+                'album_href': self.album_href,
+                'img': self.img
+        }
+
 

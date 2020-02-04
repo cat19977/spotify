@@ -36,7 +36,12 @@ def add_token():
         
         return redirect(SET_TOP_POST_URI)
     else:
-        return jsonify({"get":'method'})
+        token = Token.query.count()
+        print(token)
+        if token > 0:
+            return jsonify({"token":'true'})
+        else:
+            return jsonify({"token":'false'})
 
 #gets top songs and stores them in database
 @main.route('/set-top-songs', methods=['GET'])
@@ -55,8 +60,25 @@ def set_top_songs():
     return jsonify({'success':'yes'})
 
 @main.route('/get-top-songs', methods=['GET'])
-def get_saved_songs():
+def get_top_songs():
     songs = TopSongs.query.all()
+    s = jsonify({'data': [song.serialize for song in songs]})
+    return s
+
+@main.route('/set-saved-songs', methods=['GET'])
+def set_saved_songs():
+    header = Token.query.first().header
+    url = Token.query.first().url
+    header = ast.literal_eval(header)
+    songs = SongData()
+    data = songs.get_saved_songs(header, url)
+    if SavedSongs.query.count() == 0:
+        songs.set_saved_songs(data, header)
+    return jsonify({'success':'yes'})
+
+@main.route('/get-saved-songs', methods=['GET'])
+def get_saved_songs():
+    songs = SavedSongs.query.all()
     s = jsonify({'data': [song.serialize for song in songs]})
     return s
 

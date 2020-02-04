@@ -40,5 +40,39 @@ class SongData:
         db.session.add_all(songs)
         db.session.commit()
     
+    def get_saved_songs(self, header, url):
+        results_pre = "{}/me/tracks?limit=50".format(url)
+        results = json.loads((requests.get(results_pre, headers=header)).text)
+        offset = 50
+        result = results['items']
+        diff = 125
+        while diff >= 50:
+            results_pre = "{}/me/tracks?limit=50&offset={}".format(url, offset)
+            results = json.loads((requests.get(results_pre, headers=header)).text)
+            for item in results['items']:
+                result.append(item)
+            diff = results['total'] - len(result)
+            offset +=50
+        new_pre = "{}/me/tracks?limit=50&offset={}&limit={}".format(url, offset, diff)
+        new = json.loads((requests.get(new_pre, headers=header)).text)
+        for item in new['items']:
+            result.append(item)
+        return result
+
+    def set_saved_songs(self, data, header):
+        count = 0
+        songs = []
+        results = data
+        for song in results:
+            song = song['track']
+            add_song = SavedSongs(id = count, uri=song['uri'], title=song['name'], album=song['album']['name'],
+                        artist=song['artists'][0]['name'], popularity=song['popularity'], 
+                        artist_href=song['artists'][0]['href'], album_href=song['album']['href'])
+            songs.append(add_song)
+            count = count + 1
+        db.session.add_all(songs)
+        db.session.commit()
     
+        
+
 

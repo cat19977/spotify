@@ -8,19 +8,22 @@ class Home extends Component{
     constructor(props){
         super(props);
         this.state = {
-            show_term: ''
+            show_term: '',
         };
       this.top_data = '';
+      this.saved_data = '';
       this.getTopTracks = this.getTopTracks.bind(this);
+      this.getSavedTracks = this.getSavedTracks.bind(this);
       this.onTopClick = this.onTopClick.bind(this);
     }
 
     componentDidMount(){
       this.getTopTracks()
+      this.getSavedTracks()
     }
   
        //gets top tracks based on time (short,med,long term)
-     getTopTracks(time) {
+     getTopTracks() {
     // Make a call using the token
     $.ajax({
       url: `http://127.0.0.1:5000/get-top-songs`,
@@ -30,17 +33,37 @@ class Home extends Component{
       }
     });
     }
+
+    getSavedTracks() {
+      // Make a call using the token
+      $.ajax({
+        url: `http://127.0.0.1:5000/get-saved-songs`,
+        type: "GET",
+        success: (data) => {
+            this.saved_data = data
+        }
+      });
+      }
   
   onTopClick(time) {
     this.setState({
-      show_term: time,
+      show_term: time
     });
   }
-  
+
     render(){
+      const term = this.state.show_term;
+      let top;
+      
+      if (term === 'saved') {
+          top = <Top data={this.saved_data} time={this.state.show_term} />;
+      } else {
+          top = <Top data={this.top_data} time={this.state.show_term} /> ;
+      }
         return(
             <div className='back'>
               <div className="navbar">
+                
                 <div className='dropdown'>
                   <button className="dropbtn">Top Songs
                     <i className="fa fa-caret-down"></i>
@@ -50,12 +73,11 @@ class Home extends Component{
                       <button onClick={() => this.onTopClick('medium_term')}>Medium-Term</button>
                       <button onClick={() => this.onTopClick('long_term')}>Long-Term</button>
                   </div>
+                  
                 </div>
+                <button className="dropbtn1" onClick={() => this.onTopClick('saved')}>Saved Songs </button>
               </div>
-              {this.state.show_term ?
-                  <Top data={this.top_data} time={this.state.show_term} /> :
-                   null
-              }
+              {top}
             </div>
         );
     }

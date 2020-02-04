@@ -1,5 +1,5 @@
 .back {
-  min-height: 100%;
+  min-height: 100vh;
   width: 100%;
   text-align: center;
 }
@@ -44,10 +44,25 @@ div[role="group"][tabindex] {
   font-family: inherit; /* Important for vertical align on mobile phones */
   margin: 0; /* Important for vertical align on mobile phones */
 }
+.dropbtn1{
+  font-size: 16px;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit; /* Important for vertical align on mobile phones */
+  margin: 0; /* Important for vertical align on mobile phones */
+  float: left;
+}
+
+.dropbtn1:hover{
+  background-color: rgb(68, 110, 49);
+}
 
 /* Add a red background color to navbar links on hover */
-.navbar a:hover, .dropdown:hover .dropbtn {
-  background-color: red;
+.navbar a:hover, .dropdown:hover .dropbtn{
+  background-color: rgb(68, 110, 49);
 }
 
 /* Dropdown content (hidden by default) */
@@ -57,21 +72,22 @@ div[role="group"][tabindex] {
   background-color: #f9f9f9;
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
+  z-index: 0;
 }
 
 /* Links inside the dropdown */
-.dropdown-content a {
+.dropdown-content button {
   float: none;
   color: black;
   padding: 12px 16px;
   text-decoration: none;
+  width: 100%;
   display: block;
   text-align: left;
 }
 
 /* Add a grey background color to dropdown links on hover */
-.dropdown-content a:hover {
+.dropdown-content button:hover {
   background-color: #ddd;
 }
 

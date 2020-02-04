@@ -1,23 +1,49 @@
 import React, { Component }from "react";
-import {useEffect} from "react";
 import "./App.css";
 import Route from "./Route";
-import MyComponent from "./api"
 import * as $ from "jquery";
+import Home from "./Home"
 
 
 class App extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
-      token:''
+      haveToken: false
     };
+    this.haveToken = this.haveToken.bind(this);
   }
+
+  componentDidMount() {
+    this.haveToken()
+  }
+
+  //gets top tracks based on time (short,med,long term)
+  haveToken() {
+    // Make a call using the token
+    $.ajax({
+      url: `http://127.0.0.1:5000/add_token`,
+      type: "GET",
+      success: (data) => {
+        console.log(data['token'])
+        if (data['token'] === 'true') {
+          console.log('yes')
+          this.setState({
+            haveToken: true
+          })
+        }
+      }
+    });
+  }
+
 
   render() {
     return (
       <div className='App'>
-        <Route />
+        {this.state.haveToken ?
+            <Home /> :
+            <Route />
+        }
       </div>
     );
   }

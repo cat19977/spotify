@@ -1,5 +1,6 @@
 import React from "react";
 import "./top.css";
+import Analytics from "./Analytics";
 
 function Table(props) {
   var listData = props.data.map((item, index) =>
@@ -34,19 +35,21 @@ function ImgView(props) {
   const titles = props.title
   const artists = props.artist
   var listData = props.img_url.map((item, index) =>
-    <div class='item'>
+  <ul class="img-item">
       <img className="albums" key={index} src={item}/>
-      <span class="title">{titles[index]}</span>
-      <span class="artist">{artists[index]}</span>
-    </div>
-    );
+      <div class="details">
+        <h3><a class="title">{titles[index]}</a></h3>
+        <p class="artist">{artists[index]}</p>
+      </div>
+  </ul>
+  );
   return(
-    <div className='column'>
-      <div class='flex-container'>{listData.slice(0,10)}</div>
-      <div class='flex-container'>{listData.slice(10,20)}</div>
-      <div class='flex-container'>{listData.slice(20,30)}</div>
-      <div class='flex-container'>{listData.slice(30,40)}</div>
-      <div class='flex-container'>{listData.slice(40,50)}</div>
+    <div className='row'>
+      <div class='column'>{listData.slice(0,10)}</div>
+      <div class='column'>{listData.slice(10,20)}</div>
+      <div class='column'>{listData.slice(20,30)}</div>
+      <div class='column'>{listData.slice(30,40)}</div>
+      <div class='column'>{listData.slice(40,50)}</div>
     </div>
   )
 }
@@ -55,42 +58,34 @@ class Top extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      names: [],
-      artists: [],
-      albums: [],
-      popularity: [],
-      album_img: [],
-      data: [],
-      table: true
-    };
-    this.set_initial_data = this.set_initial_data.bind(this);
+      table: true,
+      analytics: false
+  };
   }
 
-  componentDidUpdate(prevProps) {
-    console.log(this.props.time)
-    if (this.props.time !== prevProps.time) {
-      this.set_initial_data(this.props.data, this.props.time);
-    }
-  }
-  set_initial_data(data, time) {
+  render() {
     const names = []
     const artists = []
     const albums = []
     const popularity = []
     const album_img = []
-    var items = data['data'];
+    const song_uri = []
+    const artist_uri = []
+    const items = this.props.data['data']
     for (var item in items) {
       item = items[item];
-      if (item['term'] == time) {
+      if (item['term'] === this.props.time || this.props.time == 'saved') {
         names.push(item['title']);
         artists.push(item['artist'])
         albums.push(item['album'])
         popularity.push(item['popularity'])
         album_img.push(item['img'])
+        song_uri.push(item['uri'])
+        artist_uri.push(item['artist_href'])
       }
     }
     const format_data = [];
-    for (let i = 0; i < this.state.names.length; i++) {
+    for (let i = 0; i < names.length; i++) {
       const element = [];
       element.push(names[i]);
       element.push(artists[i]);
@@ -98,33 +93,30 @@ class Top extends React.Component {
       element.push(popularity[i]);
       format_data.push(element);
     }
-    this.setState({
-      names: names,
-      artists: artists,
-      albums: albums,
-      popularity: popularity,
-      data: format_data,
-      album_img: album_img
-    });
-  }
 
-  render() {
+    const analysis_data = [song_uri, artist_uri];
+
+
+
     const display = this.state.table;
-    const data_state = this.state.data;
-    const img_url = this.state.album_img;
-    console.log(img_url);
     let element;
-    if(display){
-      element = <Table data={data_state} /> 
+    if(this.state.analytics){
+      element = <Analytics data ={analysis_data}/>
+    }
+    else if(display || this.props.time == 'saved'){
+      element = <Table data={format_data} /> 
     }
     else{
-      element = <ImgView img_url={img_url} title={this.state.names} artist={this.state.artists} />
+      element = <ImgView img_url={album_img} title={names} artist={artists} />
     }
 
     return (
       <div className='top'>
-        <button onClick={() => this.setState({table: true})}>Table View</button>
-        <button onClick={() => this.setState({table: false})}>Img View</button>
+          <button onClick={() => this.setState({table: true, analytics:false})}>Table View</button>
+          {this.props.time !== 'saved' &&
+              <button onClick={() => this.setState({table: false, analytics:false})}>Img View</button>
+          }
+          <button onClick={() => this.setState({analytics: true})}>Analytics</button>
         <div className='topSongs'>
           {element}
         </div>
