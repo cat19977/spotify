@@ -5,5 +5,6 @@ from os import path
 
 if path.exists('api/database.db'):
     os.remove('api/database.db')
+    print("hi")
 
 db.create_all(app=create_app())

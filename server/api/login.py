@@ -3,7 +3,7 @@ from flask import Flask, request, redirect, g, render_template, Blueprint, jsoni
 import requests
 from urllib.parse import quote
 from .songs import SongData
-from .models import Token, TopSongs, SavedSongs
+from .models import Token, TopSongs, Category, TopGenres, TopArtists
 from . import db
 import ast
 
@@ -16,69 +16,75 @@ API_VERSION = "v1"
 SPOTIFY_API_URL = "{}/{}".format(SPOTIFY_API_BASE_URL, API_VERSION)
 CLIENT_SIDE_URL = "http://127.0.0.1"
 PORT = 5000
-SET_TOP_POST_URI = "{}:{}/set-top-songs".format(CLIENT_SIDE_URL, PORT)
+SET_TOP_POST_URI = "{}:{}/set-database".format(CLIENT_SIDE_URL, PORT)
 
 #gets token from react and saves
 @main.route('/add_token', methods=['GET','POST'])
 def add_token():
     if request.method == 'POST':
+        api = SongData()
         token = request.get_data()
         token = token.decode('utf-8')
         token_dict = json.loads(token) #consverts string dict to real dict
         access_token = token_dict['token']
         authorization_header = {"Authorization": "Bearer {}".format(access_token)}
         header = json.dumps(authorization_header)
+        header_api = ast.literal_eval(header)
         #send token to database
         if Token.query.count()<1:
             send_token = Token(header = header, url = SPOTIFY_API_URL)
             db.session.add(send_token)
             db.session.commit()
         
-        return redirect(SET_TOP_POST_URI)
+        ##sets database info for songs
+        api.set_database(header_api, SPOTIFY_API_URL)
+
+        #sets database info genres
+        api.set_top_genres(header_api)
+
+        ##sets top artists
+        api.set_top_artists(header_api)
+        
+        return jsonify({"success":'yes'})
     else:
         token = Token.query.count()
-        if token < 0:
+        if token == 0:
             return jsonify({"token":'false'})
         else:
             token = Token.query.first()
-            return jsonify(token.serialize())
+            return jsonify({"token":'true'})
 
-#gets top songs and stores them in database
-@main.route('/set-top-songs', methods=['GET'])
-def set_top_songs():
-    header = Token.query.first().header
-    url = Token.query.first().url
-    header = ast.literal_eval(header)
-    songs = SongData()
-    times = ['short_term', 'medium_term', 'long_term']
-    num = 0
-    for time in times:
-        data = songs.get_top_songs(time, header, url)
-        if TopSongs.query.count() < 150:
-            songs.set_top_songs(data, time, num, header)
-        num = num + 50
-    return jsonify({'success':'yes'})
 
-@main.route('/get-top-songs', methods=['GET'])
-def get_top_songs():
-    songs = TopSongs.query.all()
+@main.route('/get-songs', methods=['GET'])
+def get_songs():
+    term = request.args.get('term')
+    songs = TopSongs.query.filter(TopSongs.term == term).all()
     s = jsonify({'data': [song.serialize for song in songs]})
     return s
 
-@main.route('/set-saved-songs', methods=['GET'])
-def set_saved_songs():
-    header = Token.query.first().header
-    url = Token.query.first().url
-    header = ast.literal_eval(header)
-    songs = SongData()
-    data = songs.get_saved_songs(header, url)
-    if SavedSongs.query.count() == 0:
-        songs.set_saved_songs(data, header)
-    return jsonify({'success':'yes'})
-
-@main.route('/get-saved-songs', methods=['GET'])
-def get_saved_songs():
-    songs = SavedSongs.query.all()
-    s = jsonify({'data': [song.serialize for song in songs]})
+@main.route('/get-genres', methods=['GET'])
+def get_genres():
+    term = request.args.get('term')
+    genres = TopGenres.query.filter(TopGenres.term == term).all()
+    s = jsonify({'data': [genre.serialize for genre in genres]})
     return s
 
+@main.route('/get-artists', methods=['GET'])
+def get_artists():
+    term = request.args.get('term')
+    artists = TopArtists.query.filter(TopArtists.term == term).all()
+    s = jsonify({'data': [artist.serialize for artist in artists]})
+    return s
+
+@main.route('/get-song-attr', methods=['GET'])
+def get_attr():
+    term = request.args.get('term')
+    header = Token.query.first().header
+    header = ast.literal_eval(header)
+    print(header)
+    songs = TopSongs.query.filter(TopSongs.term == term).all()
+    print(songs[0])
+    s = [song.serialize for song in songs]
+    api = SongData()
+    attrs = api.set_song_attrs(header, s)
+    return jsonify({'hi':attrs})

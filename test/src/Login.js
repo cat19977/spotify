@@ -11,6 +11,7 @@ class Login extends Component {
     this.state = {
       token: null,
       hasToken: false,
+      loading: true
     };
     this.componentDidMount = this.componentDidMount.bind(this);
   }
@@ -23,7 +24,8 @@ class Login extends Component {
       // Set token
       this.setState({
         token: _token,
-        hasToken: true
+        hasToken: true,
+        loading: false
       });
       window.token = _token;
     $.ajax({ 
@@ -33,15 +35,22 @@ class Login extends Component {
       data: JSON.stringify({'token':_token}),
       dataType: 'json',
       success: function(response){ 
-          $('#main').text(response) 
+          $('#main').text(response)
+          this.setState({
+            loading: false
+          }); 
         } 
       });
       }
     }
   
+    renderLoading() {
+      return <div>Loading...</div>;
+    }
   
 
   render(){
+
     return (
       <body className='login'>
         <div className="login-header">
@@ -63,6 +72,7 @@ class Login extends Component {
     );
   }
   }
+
   
   export default Login;
   

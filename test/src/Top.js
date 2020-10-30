@@ -59,7 +59,8 @@ class Top extends React.Component {
     super(props);
     this.state = {
       table: true,
-      analytics: false
+      analytics: false,
+      term: this.props.time
   };
   }
 
@@ -73,15 +74,14 @@ class Top extends React.Component {
     const artist_uri = []
     const items = this.props.data['data']
     for (var item in items) {
-      item = items[item];
-      if (item['term'] === this.props.time || this.props.time === 'saved') {
-        names.push(item['title']);
-        artists.push(item['artist'])
-        albums.push(item['album'])
-        popularity.push(item['popularity'])
-        album_img.push(item['img'])
-        song_uri.push(item['uri'])
-        artist_uri.push(item['artist_href'])
+      item = items[item];{
+      names.push(item['title']);
+      artists.push(item['artist'])
+      albums.push(item['album'])
+      popularity.push(item['popularity'])
+      album_img.push(item['img'])
+      song_uri.push(item['uri'])
+      artist_uri.push(item['artist_href'])
       }
     }
     const format_data = [];
@@ -95,9 +95,10 @@ class Top extends React.Component {
     }
 
     const display = this.state.table;
+    const term = this.props.time;
     let element;
     if(this.state.analytics){
-      element = <Analytics artist_data={artist_uri} song_data={song_uri}/>
+      element = <Analytics term={term}/>
     }
     else if(display || this.props.time == 'saved'){
       element = <Table data={format_data} /> 
@@ -105,14 +106,13 @@ class Top extends React.Component {
     else{
       element = <ImgView img_url={album_img} title={names} artist={artists} />
     }
-
     return (
       <div className='top'>
           <button onClick={() => this.setState({table: true, analytics:false})}>Table View</button>
           {this.props.time !== 'saved' &&
               <button onClick={() => this.setState({table: false, analytics:false})}>Img View</button>
           }
-          <button onClick={() => this.setState({analytics: true})}>Analytics</button>
+          <button onClick={() => this.setState({analytics: true, table: false})}>Analytics</button>
         <div className='topSongs'>
           {element}
         </div>
